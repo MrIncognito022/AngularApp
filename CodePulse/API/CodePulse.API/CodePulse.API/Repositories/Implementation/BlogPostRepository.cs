@@ -1,6 +1,7 @@
 ﻿using CodePulse.API.Data;
 using CodePulse.API.Models.Domain;
 using CodePulse.API.Repositories.Interface;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
 namespace CodePulse.API.Repositories.Implementation
@@ -19,6 +20,8 @@ namespace CodePulse.API.Repositories.Implementation
            await dBContext.SaveChangesAsync();
             return blogPost;
         }
+
+        
 
         public async Task<IEnumerable<BlogPost>> GetAllAsync()
         {
@@ -45,6 +48,19 @@ namespace CodePulse.API.Repositories.Implementation
             existingBlogPost.Categories = blogPost.Categories;
             await dBContext.SaveChangesAsync();
             return blogPost;
+        }
+        [HttpDelete]
+        public async Task<BlogPost?> DeleteAsync(Guid id)
+        {
+          var existingBlogPost = await dBContext.BlogPosts.FirstOrDefaultAsync(x=>x.Id==id);
+
+            if (existingBlogPost != null)
+            {
+                dBContext.BlogPosts.Remove(existingBlogPost);
+                await dBContext.SaveChangesAsync();
+                return existingBlogPost;
+            }
+            return null;
         }
     }
 }
