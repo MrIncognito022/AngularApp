@@ -1,9 +1,11 @@
 import { CommonModule } from '@angular/common';
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { EventEmitter } from 'stream';
 import { ImageService } from './image.service';
 import { response } from 'express';
+import { Observable } from 'rxjs';
+import { BlogImage } from '../../models/blog-image.model';
 
 @Component({
   selector: 'app-image-selector',
@@ -12,11 +14,12 @@ import { response } from 'express';
   templateUrl: './image-selector.component.html',
   styleUrl: './image-selector.component.css'
 })
-export class ImageSelectorComponent {
+export class ImageSelectorComponent implements OnInit {
 
   private file?: File;
   fileName: string = '';
   title: string = '';
+  images$?: Observable<BlogImage[]>;
 
   constructor(private imageService: ImageService) { }
 
@@ -27,9 +30,7 @@ export class ImageSelectorComponent {
   }
 
   uploadImage(): void {
-    console.log("image uploading");
-    console.log(this.file);
-    console.log(this.title);
+
     if (this.file && this.fileName !== '' && this.title !== '') {
       this.imageService.uploadImage(this.file, this.fileName, this.title)
         .subscribe({
@@ -39,4 +40,13 @@ export class ImageSelectorComponent {
         })
     }
   }
+
+  ngOnInit(): void {
+    this.getImages();
+  }
+
+  private getImages() {
+    this.images$ = this.imageService.getAllImages();
+  }
+
 }

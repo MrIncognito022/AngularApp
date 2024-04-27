@@ -16,6 +16,33 @@ namespace CodePulse.API.Controllers
         {
             this.imageRepository = imageRepository;
         }
+
+        //GET: {apibaseUrl:api/Images}
+        [HttpGet]
+        public async Task<IActionResult> GetAllImages()
+        {
+            // Call Image Repository
+            var images = await imageRepository.GetAll();
+            //Convert Domain Model tto Dto
+
+            var response = new List<BlogImageDto>();
+
+            foreach (var image in images) 
+            {
+                response.Add(new BlogImageDto
+                {
+                    Id = image.Id,
+                    Title = image.Title,
+                    DateCreated = image.DateCreated,
+                    FileExtension = image.FileExtension,
+                    FileName = image.FileName,
+                    Url = image.Url
+                });
+            }
+
+            return Ok(response);
+
+        }
         //Post Action Method
         [HttpPost]
         public async Task<IActionResult> UploadImage([FromForm] IFormFile file, [FromForm] string filename, [FromForm] string title)
@@ -63,5 +90,7 @@ namespace CodePulse.API.Controllers
             }
 
         }
+
+
     }
 }
