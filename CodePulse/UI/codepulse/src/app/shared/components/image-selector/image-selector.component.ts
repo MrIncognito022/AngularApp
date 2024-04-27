@@ -1,6 +1,6 @@
 import { CommonModule } from '@angular/common';
-import { Component, OnInit } from '@angular/core';
-import { FormsModule } from '@angular/forms';
+import { Component, OnInit, ViewChild, viewChild } from '@angular/core';
+import { FormsModule, NgForm } from '@angular/forms';
 import { EventEmitter } from 'stream';
 import { ImageService } from './image.service';
 import { response } from 'express';
@@ -20,6 +20,7 @@ export class ImageSelectorComponent implements OnInit {
   fileName: string = '';
   title: string = '';
   images$?: Observable<BlogImage[]>;
+  @ViewChild('form', { static: false }) imageUploadForm?: NgForm;
 
   constructor(private imageService: ImageService) { }
 
@@ -35,16 +36,19 @@ export class ImageSelectorComponent implements OnInit {
       this.imageService.uploadImage(this.file, this.fileName, this.title)
         .subscribe({
           next: (response) => {
-            console.log(response);
+            this.imageUploadForm?.resetForm();
+            this.getImages();
           }
         })
     }
   }
 
+  selectImage(image: BlogImage): void {
+    this.imageService.selectImage(image);
+  }
   ngOnInit(): void {
     this.getImages();
   }
-
   private getImages() {
     this.images$ = this.imageService.getAllImages();
   }
