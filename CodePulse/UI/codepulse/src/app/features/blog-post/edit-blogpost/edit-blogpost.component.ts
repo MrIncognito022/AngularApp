@@ -9,12 +9,13 @@ import { CategoryService } from '../../category/services/category.service';
 import { Category } from '../../category/Models/category.model';
 import { UpdateBlogPost } from '../Models/update-blog-post.model';
 import { throws } from 'assert';
+import { ImageSelectorComponent } from '../../../shared/components/image-selector/image-selector.component';
 
 
 @Component({
   selector: 'app-edit-blogpost',
   standalone: true,
-  imports: [CommonModule, FormsModule],
+  imports: [CommonModule, FormsModule, ImageSelectorComponent],
   templateUrl: './edit-blogpost.component.html',
   styleUrl: './edit-blogpost.component.css'
 })
@@ -27,6 +28,9 @@ export class EditBlogpostComponent implements OnInit, OnDestroy {
   model?: BlogPost;
   categories$?: Observable<Category[]>;
   selectedCategories?: string[]
+  isImageSelectorVisible: boolean = false;
+
+
   constructor(private route: ActivatedRoute,
     private blogPostService: BlogPostService,
     private categoryService: CategoryService,
@@ -49,7 +53,6 @@ export class EditBlogpostComponent implements OnInit, OnDestroy {
       }
     });
   }
-
   onSubmitForm(): void {
     console.log("form Submitted");
     if (this.model && this.id) {
@@ -73,7 +76,6 @@ export class EditBlogpostComponent implements OnInit, OnDestroy {
         })
     }
   }
-
   onDelete(): void {
     console.log("Delete Executed")
     console.log(typeof (this.id))
@@ -86,7 +88,12 @@ export class EditBlogpostComponent implements OnInit, OnDestroy {
         });
     }
   }
-
+  openImageSelector(): void {
+    this.isImageSelectorVisible = true
+  }
+  closeImageSelector(): void {
+    this.isImageSelectorVisible = false;
+  }
   ngOnDestroy(): void {
     this.routeSubscription?.unsubscribe()
     this.updateBlogPostSubscription?.unsubscribe();
